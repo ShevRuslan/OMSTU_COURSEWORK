@@ -6,7 +6,21 @@
         xmlns:local="clr-namespace:OMSTU_COURSEWORK"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type local:Track}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding name}"/>
+                <TextBlock Text=" - "/>
+                <TextBlock Text="{Binding artist}"/>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="0.7*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <ListBox Name="tracksList" Grid.Column="0"></ListBox>
+        <ListBox Name="tagsList" Grid.Column="1"></ListBox>
     </Grid>
 </Window>

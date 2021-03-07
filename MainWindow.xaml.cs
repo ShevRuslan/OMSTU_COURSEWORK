@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,9 +22,42 @@ namespace OMSTU_COURSEWORK
     /// </summary>
     public partial class MainWindow : Window
     {
+        List<Track> tracks = new List<Track>();
+        List<string> tags = new List<string>();
         public MainWindow()
         {
             InitializeComponent();
+            GetTracks();
+        }
+        private void GetTracks ()
+        {
+            string path = @"H:\coding\tracks\tracks.json";
+            using (StreamReader r = new StreamReader(path))
+            {
+                string json = r.ReadToEnd();
+                dynamic tracksFile = JsonConvert.DeserializeObject(json);
+                foreach (var track in tracksFile)
+                {
+                    Track track_ = new Track
+                    {
+                        name = track.name,
+                        link = track.link,
+                        artist = track.artist,
+                    };
+                    tracks.Add(track_);
+                    foreach(var tag in track.tags)
+                    {
+                        AddTag((string) tag);
+                    }
+                }
+                tracksList.ItemsSource = tracks;
+                tagsList.ItemsSource = tags;
+            }
+        }
+        private void AddTag(string tag)
+        {
+            bool exsistTag = tags.Exists(_tag => _tag.Equals(tag));
+            if (!exsistTag) tags.Add(tag);
         }
     }
 }
