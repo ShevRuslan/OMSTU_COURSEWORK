@@ -16,11 +16,30 @@
         </DataTemplate>
     </Window.Resources>
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="0.7*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        <ListBox Name="tracksList" Grid.Column="0"></ListBox>
-        <ListBox Name="tagsList" Grid.Column="1"></ListBox>
+        <TabControl>
+            <TabItem x:Name="smartphonesTab">
+                <TabItem.Header>
+                    <TextBlock Margin="3">Треки и уник. теги</TextBlock>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="0.6*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <ListBox Name="tracksList" Grid.Column="0"></ListBox>
+                        <ListBox Name="tagsList" Grid.Column="1"></ListBox>
+                    </Grid>
+                </TabItem.Content>
+            </TabItem>
+            <TabItem >
+                <TabItem.Header>
+                    <TextBlock Margin="3">Матрица тегов</TextBlock>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Button>TEST</Button>
+                </TabItem.Content>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

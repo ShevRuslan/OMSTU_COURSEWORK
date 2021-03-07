@@ -31,7 +31,7 @@ namespace OMSTU_COURSEWORK
         }
         private void GetTracks ()
         {
-            string path = @"H:\coding\tracks\tracks.json";
+            string path = @"C:\Users\Руслан\source\repos\ConsoleApp1\ConsoleApp1\bin\Debug\netcoreapp3.1\tracks4.json";
             using (StreamReader r = new StreamReader(path))
             {
                 string json = r.ReadToEnd();
