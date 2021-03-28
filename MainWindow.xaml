@@ -37,7 +37,7 @@
                     <TextBlock Margin="3">Матрица тегов</TextBlock>
                 </TabItem.Header>
                 <TabItem.Content>
-                    <Button>TEST</Button>
+                    <Button Content="Получить" Click="Button_Click"></Button>
                 </TabItem.Content>
             </TabItem>
         </TabControl>
