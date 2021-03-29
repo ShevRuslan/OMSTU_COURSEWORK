@@ -60,6 +60,7 @@
     </ApplicationDefinition>
     <Compile Include="Matrix.cs" />
     <Compile Include="MatrixTag.cs" />
+    <Compile Include="ResponseMatrixTag.cs" />
     <Compile Include="Tag.cs" />
     <Compile Include="TagIntersection.cs" />
     <Compile Include="Track.cs" />

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,6 +27,8 @@ namespace OMSTU_COURSEWORK
         List<string> tags = new List<string>();
         Matrix matrixTags;
         List<TagIntersection> tagsIntersection = new List<TagIntersection>();
+        private const int MAX_RECURSIVE_CALLS = 2000;
+        static int ctr = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -64,10 +67,9 @@ namespace OMSTU_COURSEWORK
             bool exsistTag = tags.Exists(_tag => _tag.Equals(tag));
             if (!exsistTag) tags.Add(tag);
         }
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            string path = @"H:\coding\table-tags\src\tags.json";
+            string path = @"H:\coding\table-tags\src\tags-full.json";
             using (StreamReader r = new StreamReader(path))
             {
                 string json = r.ReadToEnd();
@@ -121,19 +123,35 @@ namespace OMSTU_COURSEWORK
                     }
                 }
             }
-            List<List<string>> first = new List<List<string>>();
-            first = MatrixFind(tagsIntersection, intersectionsTags, 1, 0, new List<MatrixTag>(), new List<string>(), new List<List<string>>());
-            using (TextWriter tw = new StreamWriter("SavedList.txt"))
+            List<List<string>> allTags = new List<List<string>>();
+            uint x = 2;
+            uint y = 0;
+            List<MatrixTag> arrayFinds = new List<MatrixTag>();
+            List<string> _tags = new List<string>();
+            while (true)
             {
-                foreach (List<string> s in first)
-                {
-                    foreach (string _s in s)
-                    {
-                        tw.Write(_s + " / ");
-                    }
-                    tw.WriteLine("\n");
-                }
+                ResponseMatrixTag first = new ResponseMatrixTag();
+                first = MatrixFind(tagsIntersection, intersectionsTags, x, y, arrayFinds, _tags, new List<string>());
+                if (first.allTags.Count == 0) break;
+                    allTags.Add(new List<string>(first.allTags));
+                x = first.currentI;
+                y = first.currentJ;
+                arrayFinds = first.arrayFinds;
+                _tags = first.tags;
             }
+            uint index = 1;
+            List<string> _findTags = new List<string>();
+            foreach (List<string> s in allTags)
+            {
+                string _tag = "";
+                foreach (string _s in s)
+                {
+                    _tag += _s + " / ";
+                }
+                _findTags.Add(_tag);
+                index++;
+            }
+            findTags.ItemsSource = _findTags;
         }
 
         private uint GetIntersection(List<TagIntersection> tagsIntersection, string firstTag, string secondTag)
@@ -142,9 +160,21 @@ namespace OMSTU_COURSEWORK
             uint intersection = tag.intersectionTags.Find(_tag => _tag.name == secondTag).count;
             return intersection;
         }
-        private List<List<string>> MatrixFind(List<TagIntersection> arrayTags, string[,] array, uint currentI, uint currentJ, List<MatrixTag> arrayFinds, List<string> tags, List<List<string>> allTags)
+        private ResponseMatrixTag MatrixFind(List<TagIntersection> arrayTags, string[,] array, uint currentI, uint currentJ, List<MatrixTag> arrayFinds, List<string> tags, List<string> allTags)
         {
-            for(uint i = currentI; i <= arrayTags.Count; i++)
+            if (tags.Count == 7)
+            {
+                allTags = new List<string>(tags);
+                allTags = new List<string>(tags);
+                tags.RemoveAt(tags.Count - 1);
+                uint x = 0, y = 0;
+                MatrixTag lastTag = arrayFinds[arrayFinds.Count - 1];
+                arrayFinds.RemoveAt(arrayFinds.Count - 1);
+                x = lastTag.x;
+                y = lastTag.y;
+                return new ResponseMatrixTag { arrayTags = arrayTags, array = array, currentI = x, currentJ = y + 1, arrayFinds = arrayFinds, tags = tags, allTags = allTags };
+            }
+            for (uint i = currentI; i <= arrayTags.Count; i++)
             {
                 for(uint j = currentJ; j <= arrayTags.Count; j++)
                 {
@@ -175,9 +205,7 @@ namespace OMSTU_COURSEWORK
                         {
                             if(j == arrayTags.Count)
                             {
-                                if (tags.Count == 1) return allTags;
-
-                                allTags.Add(new List<string>(tags));
+                                allTags = new List<string>(tags);
                                 tags.RemoveAt(tags.Count - 1);
                                 uint x = 0, y = 0;
 
@@ -189,7 +217,7 @@ namespace OMSTU_COURSEWORK
                                     y = lastTag.y;
                                 }
 
-                                if (arrayFinds[arrayFinds.Count - 1].y == arrayTags.Count && tags.Count == 1) return allTags;
+                                if (arrayFinds[arrayFinds.Count - 1].y == arrayTags.Count && tags.Count == 1) return new ResponseMatrixTag { arrayTags = arrayTags, array = array, currentI = x, currentJ = y + 1, arrayFinds = arrayFinds, tags = tags, allTags = new List<string>() }; ;
 
                                 if(tags.Count < 2)
                                 {
@@ -206,17 +234,17 @@ namespace OMSTU_COURSEWORK
                                     x = lastTag.x;
                                     y = lastTag.y;
 
-                                    if(tags.Count == 5) allTags.Add(new List<string>(tags));
+                                    if(tags.Count == 5) allTags = new List<string>(tags);
                                     tags.RemoveAt(tags.Count - 1);
-                                    return MatrixFind(arrayTags, array, x, y + 1, arrayFinds, tags, allTags);
+                                    return new ResponseMatrixTag {arrayTags = arrayTags,array = array, currentI = x,  currentJ =y + 1, arrayFinds = arrayFinds, tags = tags, allTags = allTags };
                                 }
-                                return MatrixFind(arrayTags, array, x, y + 1, arrayFinds, tags, allTags);
+                                return new ResponseMatrixTag { arrayTags = arrayTags, array = array, currentI = x, currentJ = y + 1, arrayFinds = arrayFinds, tags = tags, allTags = allTags };
                             }
                         }
                     }
                 }
             }
-            return allTags;
+            return new ResponseMatrixTag { arrayTags = arrayTags, array = array, currentI = 0, currentJ = 0, arrayFinds = arrayFinds, tags = tags, allTags = allTags };
         }
         private bool isIncompatible(List<string> incompatibleTags, string tag)
         {
