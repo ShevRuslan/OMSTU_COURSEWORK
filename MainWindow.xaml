@@ -27,8 +27,23 @@
                             <ColumnDefinition Width="*"></ColumnDefinition>
                             <ColumnDefinition Width="0.6*"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <ListBox Name="tracksList" Grid.Column="0"></ListBox>
-                        <ListBox Name="tagsList" Grid.Column="1"></ListBox>
+                        <Grid Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="0.05*"></RowDefinition>
+                                <RowDefinition Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <TextBlock Name="countTrack" Grid.Row="0"></TextBlock>
+                            <ListBox Name="tracksList" Grid.Row="1"></ListBox>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="0.05*"></RowDefinition>
+                                <RowDefinition Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <TextBlock Name="countTags" Grid.Row="0"></TextBlock>
+                            <ListBox Name="tagsList" Grid.Row="1"></ListBox>
+                        </Grid>
+   
                     </Grid>
                 </TabItem.Content>
             </TabItem>

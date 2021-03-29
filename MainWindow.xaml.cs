@@ -25,18 +25,16 @@ namespace OMSTU_COURSEWORK
     {
         List<Track> tracks = new List<Track>();
         List<string> tags = new List<string>();
-        Matrix matrixTags;
         List<TagIntersection> tagsIntersection = new List<TagIntersection>();
-        private const int MAX_RECURSIVE_CALLS = 2000;
-        static int ctr = 0;
+        private string path = @"H:\coding\table-tags\src\tracks.json";
         public MainWindow()
         {
             InitializeComponent();
             GetTracks();
+            GetCrossingTags();
         }
         private void GetTracks ()
         {
-            string path = @"C:\Users\Руслан\source\repos\ConsoleApp1\ConsoleApp1\bin\Debug\netcoreapp3.1\tracks4.json";
             using (StreamReader r = new StreamReader(path))
             {
                 string json = r.ReadToEnd();
@@ -57,9 +55,50 @@ namespace OMSTU_COURSEWORK
                 }
                 tracksList.ItemsSource = tracks;
                 tagsList.ItemsSource = tags;
-                matrixTags = new Matrix(tags.Count, tags.Count);
-                matrixTags.AddFirstRow(tags.ToArray());
-                matrixTags.AddFirstCol(tags.ToArray());
+                countTrack.Text = String.Format("Количество треков: {0}",tracks.Count.ToString());
+                countTags.Text = String.Format("Количество тегов: {0}", tags.Count.ToString());
+            }
+        }
+        private void GetCrossingTags ()
+        {
+            Dictionary<string, Dictionary<string, int>> crossingTag = new Dictionary<string, Dictionary<string, int>>();
+            using (StreamReader r = new StreamReader(path))
+            {
+                string json = r.ReadToEnd();
+                dynamic tracksFile = JsonConvert.DeserializeObject(json);
+                foreach (string tag in tags)
+                {
+                    foreach(var track in tracksFile)
+                    {
+                        List<string> trackTag = new List<string>();
+                        foreach(var tracksTags in track.tags)
+                        {
+                            trackTag.Add((string)tracksTags);
+                        }
+                        bool exsist = trackTag.Exists(_trackTag => _trackTag == tag);
+                        if(exsist)
+                        {
+                            foreach(string _tag in trackTag)
+                            {
+                                if (!crossingTag.ContainsKey(tag)) crossingTag.Add(tag, new Dictionary<string, int>());
+                                if (!crossingTag[tag].ContainsKey(_tag)) crossingTag[tag].Add(_tag, 1);
+                                else crossingTag[tag][_tag] += 1;
+                            }
+                        }
+                    }
+                }
+                foreach(KeyValuePair<string, Dictionary<string, int>> tag in crossingTag)
+                {
+                    foreach(string uniqTag in tags)
+                    {
+                        if(!crossingTag[tag.Key].ContainsKey(uniqTag)) crossingTag[tag.Key].Add(uniqTag, 0);
+                    }
+                }
+            }
+            using (StreamWriter file = File.CreateText("text.json"))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(file, crossingTag);
             }
         }
         private void AddTag(string tag)
@@ -124,7 +163,7 @@ namespace OMSTU_COURSEWORK
                 }
             }
             List<List<string>> allTags = new List<List<string>>();
-            uint x = 2;
+            uint x = 100;
             uint y = 0;
             List<MatrixTag> arrayFinds = new List<MatrixTag>();
             List<string> _tags = new List<string>();
