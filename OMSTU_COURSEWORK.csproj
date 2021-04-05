@@ -58,13 +58,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CrossingTags.cs" />
+    <Compile Include="Classess\CrossingTags.cs" />
     <Compile Include="Matrix.cs" />
-    <Compile Include="MatrixTag.cs" />
-    <Compile Include="ResponseMatrixTag.cs" />
-    <Compile Include="Tag.cs" />
-    <Compile Include="TagIntersection.cs" />
-    <Compile Include="Track.cs" />
+    <Compile Include="Classess\MatrixTag.cs" />
+    <Compile Include="Classess\ResponseMatrixTag.cs" />
+    <Compile Include="Classess\Tag.cs" />
+    <Compile Include="Classess\TagIntersection.cs" />
+    <Compile Include="Classess\Track.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
